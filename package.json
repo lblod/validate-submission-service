@@ -1,0 +1,21 @@
+{
+  "name": "validate-submission-service",
+  "version": "0.0.0",
+  "description": "Microservice to construct and validate a submission harvested from a published document.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lblod/validate-submission-service.git"
+  },
+  "author": "redpencil.io",
+  "license": "MIT",
+  "dependencies": {
+    "@lblod/mu-auth-sudo": "^0.2.0",
+    "body-parser": "1.19.0",
+    "lodash.flatten": "^4.4.0",
+    "rdflib": "^1.0.7-2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
