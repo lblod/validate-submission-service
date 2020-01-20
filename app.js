@@ -1,10 +1,10 @@
 import { app, errorHandler } from 'mu';
 import bodyParser from 'body-parser';
 import flatten from 'lodash.flatten';
-import { TASK_READY_FOR_VALIDATION_STATUS, TASK_ONGOING_STATUS, TASK_SUCCESS_STATUS, TASK_FAILURE_STATUS, updateTaskStatus } from './lib/submission-task';
-import Submission, { getSubmissionByTask } from './lib/submission';
+import { TASK_READY_FOR_VALIDATION_STATUS, TASK_ONGOING_STATUS, TASK_FAILURE_STATUS, updateTaskStatus } from './lib/submission-task';
+import { getSubmissionByTask } from './lib/submission';
 
-app.use( bodyParser.json( { type: function(req) { return /^application\/json/.test( req.get('content-type') ); } } ) );
+app.use(bodyParser.json({ type: function(req) { return /^application\/json/.test(req.get('content-type')); } }));
 
 app.get('/', function(req, res) {
   res.send('Hello from validate-submission-service');
