@@ -1,5 +1,5 @@
 # validate-submission-service
-Microservice to construct and validate a submission harvested from a published document.
+Microservice to construct and validate a submission harvested from a published document or sent manually.
 
 ## Installation
 Add the following snippet to your `docker-compose.yml`:
@@ -45,6 +45,8 @@ export default [
 ```
 
 ## API
+
+### Delta handling (automatic submissions)
 ```
 POST /delta
 ```
@@ -55,6 +57,24 @@ The service is triggered by updates of resources of type `melding:AutomaticSubmi
 The delta handling consists of 2 steps:
 1. Try to fill in a Toezicht form with the harvested data
 2. Auto-submit the form if it's valid and auto-submission is requested
+
+### Submission forms (manual editing of submissions)
+```
+GET /submission-forsm/:uuid
+```
+Get the data for a submission form based on the submitted document uuid.
+
+Returns an object with 
+* source: TTL of the harvested data (in case of a concept submission) or sent data (in case of a sent submission)
+* additions: TTL
+
+```
+PUT /submission-forsm/:uuid
+```
+
+```
+POST /submission-forsm/:uuid/submit
+```
 
 ## Model
 
@@ -73,27 +93,6 @@ Once the validation process starts, the status of the automatic submission task 
 On successful completion, the status of the automatic submission task is updated to http://lblod.data.gift/automatische-melding-statuses/success.
 
 On failure, the status is updated to http://lblod.data.gift/automatische-melding-statuses/failure.
-
-### Submission
-Submission to be processed automatically
-
-#### Class
-`meb:Submission`
-
-#### Properties
-For a full list of properties of a submission, we refer to the [automatic submission documentation](https://lblod.github.io/pages-vendors/#/docs/submission-annotations). 
-
-### Form data file
-TTL file containing the data to fill in a valid Toezicht form
-
-#### Class
-`nfo:FileDataObject`
-
-#### Properties
-| Name              | Predicate             | Range                                     | Definition                                           |
-|-------------------|-----------------------|-------------------------------------------|------------------------------------------------------|
-| submittedDocument | `prov:wasDerivedFrom` | `foaf:Document` (`ext:SubmittedDocument`) | Submitted document the form data TTL is derived from |
-
 
 ## Related services
 The following services are also involved in the automatic processing of a submission:
