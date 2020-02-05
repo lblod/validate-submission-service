@@ -64,16 +64,16 @@ GET /submission-forsm/:uuid
 ```
 Get the data for a submission form based on the submitted document uuid.
 
-Returns an object with 
+Returns an object with
 * source: TTL of the harvested data (in case of a concept submission) or sent data (in case of a sent submission)
 * additions: TTL
 
 ```
-PUT /submission-forsm/:uuid
+PUT /submission-forms/:uuid
 ```
 
 ```
-POST /submission-forsm/:uuid/submit
+POST /submission-forms/:uuid/submit
 ```
 
 ## Model
@@ -102,8 +102,3 @@ The following services are also involved in the automatic processing of a submis
 
 ## Known limitations
 * The algorithm to define the _best matching_ form currently depends on the `rdf:type` of the submitted document. This approach works for the current Toezicht forms, but we probably need a semantic way to express a (the best) matching form.
-
-
-
-
-
