@@ -123,6 +123,11 @@ app.post('/submission-forms/:uuid/submit', async function(req, res, next) {
   const formData = req.body.form;
   try {
     const submission = await getSubmissionBySubmissionDocument(uuid, formData);
+
+    if(!submission){
+      throw new Error(`No submission found for uuid ${uuid}`);
+    }
+
     submission.updateStatus(SUBMITABLE_STATUS);
     const status = await submission.process();
 
