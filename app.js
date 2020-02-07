@@ -119,7 +119,7 @@ app.put('/submission-forms/:uuid', async function(req, res, next) {
  * I.e. validate the filled in form. If it's valid, update the status of the submission to 'sent'
 */
 app.post('/submission-forms/:uuid/submit', async function(req, res, next) {
-  const uuid = req.query.uuid;
+  const uuid = req.params.uuid;
   const formData = req.body.form;
   try {
     const submission = await getSubmissionBySubmissionDocument(uuid, formData);
