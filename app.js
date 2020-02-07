@@ -2,7 +2,7 @@ import { app, errorHandler } from 'mu';
 import bodyParser from 'body-parser';
 import flatten from 'lodash.flatten';
 import { TASK_READY_FOR_VALIDATION_STATUS, TASK_ONGOING_STATUS, TASK_SUCCESS_STATUS, TASK_FAILURE_STATUS, updateTaskStatus } from './lib/submission-task';
-import { getSubmissionByTask, getSubmissionBySubmissionDocument, SUBMITABLE_STATUS, SENT_STATUS, CONCEPT_STATUS } from './lib/submission';
+import { getSubmissionByTask, getSubmissionBySubmissionDocument, getSubmissionStatus, SUBMITABLE_STATUS, SENT_STATUS, CONCEPT_STATUS } from './lib/submission';
 import { getSubmissionForm, updateSubmissionForm, cleanupSubmissionForm } from './lib/submission-form';
 
 app.use(bodyParser.json({ type: function(req) { return /^application\/json/.test(req.get('content-type')); } }));
@@ -127,10 +127,15 @@ app.post('/submission-forms/:uuid/submit', async function(req, res, next) {
     return res.status(404).send({ title: 'No submission found.' });
   }
 
+  let status = await getSubmissionStatus(submission.submission);
+  if (status == SENT_STATUS){
+    return res.status(422).send({ tile: `Submission ${submission.submission} already processed` });
+  }
+
   try {
 
     await submission.updateStatus(SUBMITABLE_STATUS);
-    const status = await submission.process();
+    status = await submission.process();
 
     if (status == SENT_STATUS) {
       await cleanupSubmissionForm(uuid);
