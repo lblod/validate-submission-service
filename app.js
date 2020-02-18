@@ -3,7 +3,7 @@ import bodyParser from 'body-parser';
 import flatten from 'lodash.flatten';
 import { TASK_READY_FOR_VALIDATION_STATUS, TASK_ONGOING_STATUS, TASK_SUCCESS_STATUS, TASK_FAILURE_STATUS, updateTaskStatus } from './lib/submission-task';
 import { getSubmissionByTask, getSubmissionBySubmissionDocument, getSubmissionStatus, SUBMITABLE_STATUS, SENT_STATUS, CONCEPT_STATUS } from './lib/submission';
-import { getSubmissionForm, updateSubmissionForm, cleanupSubmissionForm } from './lib/submission-form';
+import { getSubmissionForm, updateSubmissionForm, cleanupSubmissionForm, createSubmissionForm } from './lib/submission-form';
 
 app.use(bodyParser.json({ type: function(req) { return /^application\/json/.test(req.get('content-type')); } }));
 
@@ -84,7 +84,6 @@ function isTriggerTriple(triple) {
  * @return {SubmissionForm} containing the harvested TTL, additions and deletions
 */
 app.get('/submission-forms/:uuid', async function(req, res, next) {
-  console.log(JSON.stringify(req.headers));
   const uuid = req.params.uuid;
   try {
     const form = await getSubmissionForm(uuid);
@@ -94,6 +93,14 @@ app.get('/submission-forms/:uuid', async function(req, res, next) {
     console.log(e);
     return next(e);
   }
+});
+
+//TODO revist API
+app.post('/submission-forms', async function(req, res, next){
+  const { additions, removals, submission } = req.body;
+  console.log('debug');
+  await createSubmissionForm({ additions, removals, submission });
+  return res.status(201).send();
 });
 
 /**
