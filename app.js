@@ -120,21 +120,25 @@ app.put('/submission-forms/:uuid', async function(req, res, next) {
 */
 app.post('/submission-forms/:uuid/submit', async function(req, res, next) {
   const uuid = req.params.uuid;
-  const formData = req.body.form;
-
-  const submission = await getSubmissionBySubmissionDocument(uuid, formData);
-  if(!submission){
-    return res.status(404).send({ title: 'No submission found.' });
-  }
-
-  let status = await getSubmissionStatus(submission.submission);
-  if (status == SENT_STATUS){
-    return res.status(422).send({ tile: `Submission ${submission.submission} already processed` });
-  }
-
+  let submissionForm;
   try {
+    submissionForm = await getSubmissionForm(uuid);
+  }
+  catch(error){
+    console.log(error);
+    return res.status(500).send({ title: 'Unable to submit form' });
+  }
+
+  //We work on the merged data.
+  const submission = await getSubmissionBySubmissionDocument(uuid, submissionForm.mergedData);
+  try {
+    let status = await getSubmissionStatus(submission.submission);
+    if (status == SENT_STATUS){
+      return res.status(422).send({ title: `Submission ${submission.submission} already processed` });
+    }
 
     await submission.updateStatus(SUBMITABLE_STATUS);
+
     status = await submission.process();
 
     if (status == SENT_STATUS) {
@@ -143,12 +147,12 @@ app.post('/submission-forms/:uuid/submit', async function(req, res, next) {
     } else {
       return res.status(400).send({ title: 'Unable to submit form' });
     }
-
-  } catch (e) {
+  }
+  catch(error){
     await submission.updateStatus(CONCEPT_STATUS);
     console.log(`Something went wrong while updating submission with id ${uuid}`);
-    console.log(e);
-    return next(e);
+    console.log(error);
+    return next(error);
   }
 });
 
