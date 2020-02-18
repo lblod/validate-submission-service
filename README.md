@@ -69,6 +69,17 @@ Returns an object with
 * additions: TTL
 
 ```
+POST /submission-forms
+
+expected payload: {
+ submission: "http://submission/uri"
+ additions: '',
+ removals: ''
+}
+```
+This will link a Submission to as SubmissionDocument. Store the additions and removals.
+
+```
 PUT /submission-forms/:uuid
 ```
 
