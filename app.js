@@ -97,9 +97,9 @@ app.get('/submission-forms/:uuid', async function(req, res, next) {
 
 //TODO revist API
 app.post('/submission-forms', async function(req, res, next){
-  const { additions, removals, submission } = req.body;
+  const { additions, removals, submission, subject } = req.body;
   console.log('debug');
-  await createSubmissionForm({ additions, removals, submission });
+  await createSubmissionForm({ additions, removals, submission, subject });
   return res.status(201).send();
 });
 
