@@ -3,7 +3,7 @@ import bodyParser from 'body-parser';
 import flatten from 'lodash.flatten';
 import { TASK_READY_FOR_VALIDATION_STATUS, TASK_ONGOING_STATUS, TASK_SUCCESS_STATUS, TASK_FAILURE_STATUS, updateTaskStatus } from './lib/submission-task';
 import { getSubmissionByTask, getSubmissionBySubmissionDocument, getSubmissionStatus, SUBMITABLE_STATUS, SENT_STATUS, CONCEPT_STATUS } from './lib/submission';
-import { getSubmissionForm, updateSubmissionForm, cleanupSubmissionForm, createSubmissionForm } from './lib/submission-form';
+import { getSubmissionForm, updateSubmissionForm, cleanupSubmissionForm, initializeSubmissionForm } from './lib/submission-form';
 
 app.use(bodyParser.json({ type: function(req) { return /^application\/json/.test(req.get('content-type')); } }));
 
@@ -18,7 +18,7 @@ app.get('/', function(req, res) {
 app.post('/delta', async function(req, res, next) {
   const tasks = getAutomaticSubmissionTasks(req.body);
   if (!tasks.length) {
-    console.log("Delta does not contain a automatic submission task with status 'ready-for-validation'. Nothing should happen.");
+    console.log("Delta does not contain an automatic submission task with status 'ready-for-validation'. Nothing should happen.");
     return res.status(204).send();
   }
 
@@ -95,17 +95,21 @@ app.get('/submission-forms/:uuid', async function(req, res, next) {
   }
 });
 
-//TODO revist API
+/**
+ * Create a new submission form with the given URI and attach to the given submission.
+ * Used for manual submissions that are not using the automatic submission API.
+ *
+ * Note: the URI for the resource to be created is passed in the request body!
+*/
 app.post('/submission-forms', async function(req, res, next){
   const { additions, removals, submission, subject } = req.body;
-  await createSubmissionForm({ additions, removals, submission, subject });
-  return res.status(201).send();
+  const { uuid } = await initializeSubmissionForm({ uri: subject, submission });
+  await updateSubmissionForm(uuid, { additions, removals });
+  return res.status(204).send();
 });
 
 /**
- * Update data of a submission form
- *
- * @return {SubmissionForm} containing the additions and deletions. The source cannot be updated.
+ * Update the additions and deletions of a submission form. The source cannot be updated.
 */
 app.put('/submission-forms/:uuid', async function(req, res, next) {
   const uuid = req.params.uuid;
@@ -135,8 +139,8 @@ app.post('/submission-forms/:uuid/submit', async function(req, res, next) {
     return res.status(500).send({ title: 'Unable to submit form' });
   }
 
-  //We work on the merged data.
-  const submission = await getSubmissionBySubmissionDocument(uuid, submissionForm.mergedData);
+  const submission = await getSubmissionBySubmissionDocument(uuid);
+  submission.ttl = submissionForm.mergedData; // We work on the merged data
   try {
     let status = await getSubmissionStatus(submission.submission);
     if (status == SENT_STATUS){
@@ -156,7 +160,7 @@ app.post('/submission-forms/:uuid/submit', async function(req, res, next) {
   }
   catch(error){
     await submission.updateStatus(CONCEPT_STATUS);
-    console.log(`Something went wrong while updating submission with id ${uuid}`);
+    console.log(`Something went wrong while submitting submission with id ${uuid}`);
     console.log(error);
     return next(error);
   }
