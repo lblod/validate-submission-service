@@ -72,6 +72,7 @@ Returns an object with
 POST /submission-forms
 
 expected payload: {
+ subject: "http://submission-document/uri"
  submission: "http://submission/uri"
  additions: '',
  removals: ''
