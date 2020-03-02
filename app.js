@@ -1,7 +1,11 @@
 import { app, errorHandler } from 'mu';
 import bodyParser from 'body-parser';
 import flatten from 'lodash.flatten';
-import { TASK_READY_FOR_VALIDATION_STATUS, TASK_ONGOING_STATUS, TASK_SUCCESS_STATUS, TASK_FAILURE_STATUS, updateTaskStatus } from './lib/submission-task';
+import { TASK_READY_FOR_VALIDATION_STATUS,
+         TASK_ONGOING_STATUS,
+         TASK_SUCCESSFUL_CONCEPT_STATUS,
+         TASK_SUCCESSFUL_SENT_STATUS,
+         TASK_FAILURE_STATUS, updateTaskStatus } from './lib/submission-task';
 import { getSubmissionByTask, getSubmissionBySubmissionDocument, getSubmissionStatus, SUBMITABLE_STATUS, SENT_STATUS, CONCEPT_STATUS } from './lib/submission';
 import { getSubmissionForm, updateSubmissionForm, cleanupSubmissionForm, initializeSubmissionForm } from './lib/submission-form';
 
@@ -29,8 +33,13 @@ app.post('/delta', async function(req, res, next) {
 
       const handleAutomaticSubmission = async () => {
         try {
-          await submission.process();
-          await updateTaskStatus(task, TASK_SUCCESS_STATUS);
+          const resultingStatus = await submission.process();
+          if(resultingStatus == SENT_STATUS){
+            await updateTaskStatus(task, TASK_SUCCESSFUL_SENT_STATUS);
+          }
+          else{
+            await updateTaskStatus(task, TASK_SUCCESSFUL_CONCEPT_STATUS);
+          }
         } catch (e) {
           await updateTaskStatus(task, TASK_FAILURE_STATUS);
         }
