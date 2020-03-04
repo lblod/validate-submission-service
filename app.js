@@ -91,7 +91,7 @@ function isTriggerTriple(triple) {
  * Submit a submission document
  * I.e. validate the filled in form. If it's valid, update the status of the submission to 'sent'
 */
-app.post('/submission-document/:uuid/submit', async function(req, res, next) {
+app.post('/submission-documents/:uuid/submit', async function(req, res, next) {
   const uuid = req.params.uuid;
 
   const submission = await getSubmissionBySubmissionDocument(uuid);
