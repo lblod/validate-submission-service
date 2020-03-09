@@ -88,12 +88,38 @@ function isTriggerTriple(triple) {
  */
 
 /**
+ * Update the additions and deletions of a submission form. The source, meta and form cannot be updated.
+*/
+app.put('/submission-documents/:uuid', async function(req, res, next) {
+  const uuid = req.params.uuid;
+  const submission = await getSubmissionBySubmissionDocument(uuid);
+
+  if (submission) {
+    try {
+      if (submission.status == SENT_STATUS) {
+        return res.status(422).send({ title: `Submission ${submission.uri} already submitted` });
+      } else {
+        const { additions, removals } = req.body;
+        await submission.update({ additions, removals });
+        return res.status(204).send();
+      }
+    } catch (e) {
+      console.log(`Something went wrong while updating submission with id ${uuid}`);
+      console.log(e);
+      return next(e);
+    }
+  } else {
+    return res.status(404).send({ title: `Submission ${uuid} not found` });
+  }
+
+});
+
+/**
  * Submit a submission document
  * I.e. validate the filled in form. If it's valid, update the status of the submission to 'sent'
 */
 app.post('/submission-documents/:uuid/submit', async function(req, res, next) {
   const uuid = req.params.uuid;
-
   const submission = await getSubmissionBySubmissionDocument(uuid);
 
   if (submission) {
@@ -110,7 +136,7 @@ app.post('/submission-documents/:uuid/submit', async function(req, res, next) {
         }
       }
     }
-    catch(error){
+    catch (error){
       await submission.updateStatus(CONCEPT_STATUS);
       console.log(`Something went wrong while submitting submission with id ${uuid}`);
       console.log(error);
