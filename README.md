@@ -58,7 +58,19 @@ The delta handling consists of 2 steps:
 1. Try to fill in a Toezicht form with the harvested data
 2. Auto-submit the form if it's valid and auto-submission is requested
 
-### Submit a submission document
+### Manual editing of submission documents
+#### Update a submission document
+```
+PUT /submission-documents/:uuid
+
+expected payload: {
+ additions: '',
+ removals: ''
+}
+```
+Update a submission document based on the submitted document uuid. The additions and removals are written to TTL files. The current state of the filled in form is also written to a separate TTL file.
+
+#### Submit a submission document
 ```
 POST /submission-document/:uuid/submit
 ```
@@ -78,7 +90,7 @@ The model is specified in the [README of the automatic submission service](https
 ### Automatic submission task statuses
 Once the validation process starts, the status of the automatic submission task is updated to http://lblod.data.gift/automatische-melding-statuses/validating.
 
-On successful completion, the status of the automatic submission task is updated to http://lblod.data.gift/automatische-melding-statuses/success.
+On successful completion, the status of the automatic submission task is updated to http://lblod.data.gift/automatische-melding-statuses/successful-concept or http://lblod.data.gift/automatische-melding-statuses/successful-sent, depending whether the submission landed in 'concept' or in 'sent' status.
 
 On failure, the status is updated to http://lblod.data.gift/automatische-melding-statuses/failure.
 
