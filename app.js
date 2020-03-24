@@ -9,6 +9,8 @@ import { TASK_READY_FOR_VALIDATION_STATUS,
          updateTaskStatus } from './lib/submission-task';
 import { getSubmissionByTask, getSubmissionBySubmissionDocument, SUBMITABLE_STATUS, SENT_STATUS, CONCEPT_STATUS } from './lib/submission';
 
+export const SERVICE_URI = "http://lblod.data.gift/services/validate-submission-service";
+
 app.use(bodyParser.json({ type: function(req) { return /^application\/json/.test(req.get('content-type')); } }));
 
 app.get('/', function(req, res) {
