@@ -13,9 +13,9 @@
     "body-parser": "1.19.0",
     "lodash.flatten": "^4.4.0",
     "rdflib": "^1.0.7-2",
-    "forking-store": "1.0.0",
-    "moment": "2.24.0",
-    "@lblod/submission-form-helpers": "1.0.0"
+    "forking-store": "^1.0.0",
+    "moment": "^2.24.0",
+    "@lblod/submission-form-helpers": "^1.1.1"
   },
   "devDependencies": {},
   "scripts": {
