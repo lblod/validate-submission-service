@@ -8,13 +8,13 @@ Add the following snippet to your `docker-compose.yml`:
 validate-submission:
   image: lblod/validate-submission-service
   volumes:
+    - ./config/semantic-forms:/share/semantic-forms
     - ./data/files/submissions:/share/submissions
-    - ./data/semantic-forms:/data/semantic-forms
 ```
 
-The volume mounted in `/share/submissions` must contain the Turtle files containing the data harvested from the published documents. The resulting Turtle files to fill in the forms will also be written to this folder.
+The volume mounted in `/share/semantic-forms` must contain all the Turtle files containing current and deprecated form definitions. We recommend adding a timestamp to the Turtle file names to differentiate them over time.
 
-The volume mounted in `/data/semantic-forms` must contain the description of the Toezicht forms in Turtle format.
+The volume mounted in `/share/submissions` must contain the Turtle files containing the data harvested from the published documents. The resulting Turtle files to fill in the forms will also be written to this folder.
 
 Configure the delta-notification service to send notifications on the `/delta` endpoint when an automatic submission task is read for validation. Add the following snippet in the delta rules configuration of your project:
 
