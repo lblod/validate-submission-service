@@ -15,7 +15,7 @@
     "rdflib": "1.1.0",
     "forking-store": "^1.0.0",
     "moment": "^2.24.0",
-    "@lblod/submission-form-helpers": "^1.2.0"
+    "@lblod/submission-form-helpers": "^1.2.3"
   },
   "devDependencies": {},
   "scripts": {
