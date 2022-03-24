@@ -10,7 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "@lblod/mu-auth-sudo": "^0.2.0",
-    "@lblod/submission-form-helpers": "^1.2.3",
+    "@lblod/submission-form-helpers": "^1.3.0",
     "body-parser": "1.19.0",
     "forking-store": "^1.0.0",
     "fs-extra": "^8.1.0",
