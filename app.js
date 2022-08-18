@@ -30,8 +30,6 @@ app.post('/delta', async function (req, res, next) {
       .filter((insert) => insert.object.value === env.VALIDATE_OPERATION)
       .map((insert) => insert.subject.value);
 
-    debugger;
-
     for (const taskUri of actualTaskUris) {
       try {
         await updateTaskStatus(taskUri, env.TASK_ONGOING_STATUS);
@@ -39,11 +37,24 @@ app.post('/delta', async function (req, res, next) {
         const submission = await getSubmissionByTask(taskUri);
         const resultingStatus = await submission.process();
 
+        let saveStatus;
+        switch (resultingStatus) {
+          case SENT_STATUS:
+            saveStatus = env.TASK_SUCCESSFUL_SENT_STATUS;
+            break;
+          case CONCEPT_STATUS:
+            saveStatus = env.TASK_SUCCESSFUL_CONCEPT_STATUS;
+            break;
+          default:
+            saveStatus = resultingStatus;
+            break;
+        }
+
         await updateTaskStatus(
           taskUri,
           env.TASK_SUCCESS_STATUS,
           undefined, //Potential errorURI
-          (resultingStatus === SENT_STATUS) ? env.TASK_SUCCESSFUL_SENT_STATUS : env.TASK_SUCCESSFUL_CONCEPT_STATUS
+          saveStatus
         );
       }
       catch (error) {
