@@ -35,7 +35,8 @@ app.post('/delta', async function (req, res, next) {
         await updateTaskStatus(taskUri, env.TASK_ONGOING_STATUS);
         
         const submission = await getSubmissionByTask(taskUri);
-        const resultingStatus = await submission.process();
+        const { status, logicalFileUri } = await submission.process();
+        const resultingStatus = status;
 
         let saveStatus;
         switch (resultingStatus) {
@@ -54,7 +55,8 @@ app.post('/delta', async function (req, res, next) {
           taskUri,
           env.TASK_SUCCESS_STATUS,
           undefined, //Potential errorURI
-          saveStatus
+          saveStatus,
+          logicalFileUri
         );
       }
       catch (error) {
@@ -119,7 +121,7 @@ app.post('/submission-documents/:uuid/submit', async function(req, res, next) {
         return res.status(422).send({ title: `Submission ${submission.uri} already submitted` });
       } else {
         await submission.updateStatus(SUBMITABLE_STATUS);
-        const newStatus = await submission.process();
+        const newStatus = (await submission.process()).status;
         if (newStatus == SENT_STATUS) {
           return res.status(204).send();
         } else {

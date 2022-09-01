@@ -10,7 +10,7 @@ export const TASK_SUCCESSFUL_SENT_STATUS = 'http://lblod.data.gift/automatische-
 export const OPERATION_PREDICATE = 'http://redpencil.data.gift/vocabularies/tasks/operation';
 export const VALIDATE_OPERATION = 'http://lblod.data.gift/id/jobs/concept/TaskOperation/validate';
 
-const PREFIX_TABLE = {
+export const PREFIX_TABLE = {
   meb:          'http://rdf.myexperiment.org/ontologies/base/',
   xsd:          'http://www.w3.org/2001/XMLSchema#',
   pav:          'http://purl.org/pav/',
@@ -35,6 +35,7 @@ const PREFIX_TABLE = {
   wotSec:       'https://www.w3.org/2019/wot/security#',
   task:         'http://redpencil.data.gift/vocabularies/tasks/',
   asj:          'http://data.lblod.info/id/automatic-submission-job/',
+  dbpedia:      'http://dbpedia.org/ontology/',
 };
 
 export const PREFIXES = (() => {
