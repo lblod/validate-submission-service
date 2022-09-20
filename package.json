@@ -1,6 +1,6 @@
 {
   "name": "validate-submission-service",
-  "version": "0.13.0",
+  "version": "1.0.0",
   "description": "Microservice to construct and validate a submission harvested from a published document.",
   "repository": {
     "type": "git",
