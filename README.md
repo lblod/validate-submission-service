@@ -80,21 +80,28 @@ Submits a submission document if it's valid.
 ### Model
 
 #### Automatic submission task
-A resource describing the status and progress of the processing of an automatic submission.
+
+A resource describing the status and operation of the subtask of processing an automatic submission job.
 
 ##### Class
-`melding:AutomaticSubmissionTask`
+
+`task:Task`
 
 ##### Properties
-The model is specified in the [README of the automatic submission service](https://github.com/lblod/automatic-submission-service#model).
+
+The model is specified in the [README of the job-controller-service](https://github.com/lblod/job-controller-service#task).
+
 ___
+
 #### Automatic submission task statuses
-Once the validation process starts, the status of the automatic submission task is updated to http://lblod.data.gift/automatische-melding-statuses/validating.
 
-On successful completion, the status of the automatic submission task is updated to http://lblod.data.gift/automatische-melding-statuses/successful-concept or http://lblod.data.gift/automatische-melding-statuses/successful-sent, depending whether the submission landed in 'concept' or in 'sent' status.
+Once the enrichment process starts, the status of the automatic submission task is updated to http://redpencil.data.gift/id/concept/JobStatus/busy.
 
-On failure, the status is updated to http://lblod.data.gift/automatische-melding-statuses/failure.
+On successful completion, the status of the automatic submission task is updated to http://redpencil.data.gift/id/concept/JobStatus/success. The resultsContainer is then linked to the inputContainer of the task, because no file has been created or modified, only triples in the database.
+
+On failure, the status is updated to http://redpencil.data.gift/id/concept/JobStatus/failed. If possible, an error is written to the database and the error is linked to this failed task.
 ___
+
 #### Submission
 Submission to be validated and submitted. 
 
