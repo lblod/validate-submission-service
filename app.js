@@ -1,6 +1,5 @@
 import { app, errorHandler } from 'mu';
 import bodyParser from 'body-parser';
-import { updateTaskStatus } from './lib/submission-task';
 import {
   getSubmissionByTask,
   getSubmissionBySubmissionDocument,
@@ -46,7 +45,11 @@ app.post('/delta', async function (req, res) {
     for (const task of actualTasks) {
       const taskUri = task.value;
       try {
-        await updateTaskStatus(taskUri, cts.TASK_STATUSES.busy);
+        await tsk.updateStatus(
+          task,
+          namedNode(cts.TASK_STATUSES.busy),
+          namedNode(cts.SERVICES.validateSubmission)
+        );
 
         const submission = await getSubmissionByTask(taskUri);
         const { status, logicalFileUri } = await submission.process();
@@ -65,23 +68,28 @@ app.post('/delta', async function (req, res) {
             break;
         }
 
-        await updateTaskStatus(
-          taskUri,
-          cts.TASK_STATUSES.success,
-          undefined, //Potential errorURI
-          saveStatus,
-          logicalFileUri
+        await tsk.updateStatus(
+          task,
+          namedNode(cts.TASK_STATUSES.success),
+          namedNode(cts.SERVICES.validateSubmission),
+          { files: [namedNode(logicalFileUri)] }
         );
       } catch (error) {
         const message = `Something went wrong while enriching for task ${taskUri}`;
         console.error(`${message}\n`, error.message);
         console.error(error);
-        const errorUri = await err.create(
+        const errorNode = await err.create(
           namedNode(cts.SERVICES.validateSubmission),
           message,
           error.message
         );
-        await updateTaskStatus(taskUri, cts.TASK_STATUSES.failed, errorUri);
+        await tsk.updateStatus(
+          task,
+          namedNode(cts.TASK_STATUSES.failed),
+          namedNode(cts.SERVICES.validateSubmission),
+          undefined,
+          namedNode(errorNode)
+        );
       }
     }
   } catch (error) {
