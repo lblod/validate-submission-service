@@ -9,3 +9,7 @@ export const SUBMITABLE_STATUS =
   'http://lblod.data.gift/concepts/f6330856-e261-430f-b949-8e510d20d0ff';
 export const SENT_STATUS =
   'http://lblod.data.gift/concepts/9bd8d86d-bb10-4456-a84e-91e9507c374c';
+
+export const FORM_GRAPH = 'http://data.lblod.info/graphs/semantic-forms';
+export const META_GRAPH = 'http://data.lblod.info/graphs/meta';
+export const SOURCE_GRAPH = 'http://data.lblod.info/graphs/submission';

@@ -124,7 +124,7 @@ app.put('/submission-documents/:uuid', async function (req, res, next) {
           .send({ title: `Submission ${submission.uri} already submitted` });
       } else {
         const { additions, removals } = req.body;
-        await submission.update({ additions, removals });
+        await submission.update(additions, removals);
         return res.status(204).send();
       }
     } catch (e) {
