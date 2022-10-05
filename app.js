@@ -9,7 +9,13 @@ import {
   CONCEPT_STATUS,
 } from './lib/submission';
 import * as env from './env.js';
-import { saveError } from './lib/utils.js';
+import * as cts from './automatic-submission-flow-tools/constants.js';
+import * as tsk from './automatic-submission-flow-tools/asfTasks.js';
+import * as del from './automatic-submission-flow-tools/deltas.js';
+import * as smt from './automatic-submission-flow-tools/asfSubmissions.js';
+import * as err from './automatic-submission-flow-tools/errors.js';
+import * as N3 from 'n3';
+const { namedNode } = N3.DataFactory;
 
 app.use(errorHandler);
 app.use(
@@ -34,17 +40,16 @@ app.post('/delta', async function (req, res) {
 
   try {
     //Don't trust the delta-notifier, filter as best as possible. We just need the task that was created to get started.
-    const actualTaskUris = req.body
-      .map((changeset) => changeset.inserts)
-      .filter((inserts) => inserts.length > 0)
-      .flat()
-      .filter((insert) => insert.predicate.value === env.OPERATION_PREDICATE)
-      .filter((insert) => insert.object.value === env.VALIDATE_OPERATION)
-      .map((insert) => insert.subject.value);
+    const actualTasks = del.getSubjects(
+      req.body,
+      namedNode(cts.PREDICATE_TABLE.task_operation),
+      namedNode(cts.OPERATIONS.validate)
+    );
 
-    for (const taskUri of actualTaskUris) {
+    for (const task of actualTasks) {
+      const taskUri = task.value;
       try {
-        await updateTaskStatus(taskUri, env.TASK_ONGOING_STATUS);
+        await updateTaskStatus(taskUri, cts.TASK_STATUSES.busy);
 
         const submission = await getSubmissionByTask(taskUri);
         const { status, logicalFileUri } = await submission.process();
@@ -65,7 +70,7 @@ app.post('/delta', async function (req, res) {
 
         await updateTaskStatus(
           taskUri,
-          env.TASK_SUCCESS_STATUS,
+          cts.TASK_STATUSES.success,
           undefined, //Potential errorURI
           saveStatus,
           logicalFileUri
@@ -74,8 +79,12 @@ app.post('/delta', async function (req, res) {
         const message = `Something went wrong while enriching for task ${taskUri}`;
         console.error(`${message}\n`, error.message);
         console.error(error);
-        const errorUri = await saveError({ message, detail: error.message });
-        await updateTaskStatus(taskUri, env.TASK_FAILURE_STATUS, errorUri);
+        const errorUri = await err.create(
+          namedNode(cts.SERVICES.validateSubmission),
+          message,
+          error.message
+        );
+        await updateTaskStatus(taskUri, cts.TASK_STATUSES.failed, errorUri);
       }
     }
   } catch (error) {
@@ -83,7 +92,11 @@ app.post('/delta', async function (req, res) {
       'The task for enriching a submission could not even be started or finished due to an unexpected problem.';
     console.error(`${message}\n`, error.message);
     console.error(error);
-    await saveError({ message, detail: error.message });
+    await err.create(
+      namedNode(cts.SERVICES.validateSubmission),
+      message,
+      error.message
+    );
   }
 });
 
