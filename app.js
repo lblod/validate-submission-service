@@ -4,9 +4,6 @@ import { updateTaskStatus } from './lib/submission-task';
 import {
   getSubmissionByTask,
   getSubmissionBySubmissionDocument,
-  SUBMITABLE_STATUS,
-  SENT_STATUS,
-  CONCEPT_STATUS,
 } from './lib/submission';
 import * as env from './env.js';
 import * as cts from './automatic-submission-flow-tools/constants.js';
@@ -57,10 +54,10 @@ app.post('/delta', async function (req, res) {
 
         let saveStatus;
         switch (resultingStatus) {
-          case SENT_STATUS:
+          case env.SENT_STATUS:
             saveStatus = env.TASK_SUCCESSFUL_SENT_STATUS;
             break;
-          case CONCEPT_STATUS:
+          case env.CONCEPT_STATUS:
             saveStatus = env.TASK_SUCCESSFUL_CONCEPT_STATUS;
             break;
           default:
@@ -113,7 +110,7 @@ app.put('/submission-documents/:uuid', async function (req, res, next) {
 
   if (submission) {
     try {
-      if (submission.status == SENT_STATUS) {
+      if (submission.status == env.SENT_STATUS) {
         return res
           .status(422)
           .send({ title: `Submission ${submission.uri} already submitted` });
@@ -144,21 +141,21 @@ app.post('/submission-documents/:uuid/submit', async function (req, res, next) {
 
   if (submission) {
     try {
-      if (submission.status == SENT_STATUS) {
+      if (submission.status == env.SENT_STATUS) {
         return res
           .status(422)
           .send({ title: `Submission ${submission.uri} already submitted` });
       } else {
-        await submission.updateStatus(SUBMITABLE_STATUS);
+        await submission.updateStatus(env.SUBMITABLE_STATUS);
         const newStatus = (await submission.process()).status;
-        if (newStatus == SENT_STATUS) {
+        if (newStatus == env.SENT_STATUS) {
           return res.status(204).send();
         } else {
           return res.status(400).send({ title: 'Unable to submit form' });
         }
       }
     } catch (error) {
-      await submission.updateStatus(CONCEPT_STATUS);
+      await submission.updateStatus(env.CONCEPT_STATUS);
       console.log(
         `Something went wrong while submitting submission with id ${uuid}`
       );
