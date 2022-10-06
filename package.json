@@ -17,11 +17,6 @@
     "rdf-string-ttl": "github:benjay10/rdf-string-ttl.js",
     "sparqljson-parse": "^2.1.1",
     "uuid": "^9.0.0",
-
-    "forking-store": "^1.0.0",
-    "fs-extra": "^8.1.0",
-    "lodash.flatten": "^4.4.0",
-    "moment": "^2.24.0",
     "rdflib": "1.1.0"
   },
   "devDependencies": {
