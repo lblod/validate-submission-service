@@ -88,7 +88,7 @@ app.post('/delta', async function (req, res) {
           namedNode(cts.TASK_STATUSES.failed),
           namedNode(cts.SERVICES.validateSubmission),
           undefined,
-          namedNode(errorNode)
+          errorNode
         );
       }
     }
