@@ -8,7 +8,6 @@ import * as env from './env.js';
 import * as cts from './automatic-submission-flow-tools/constants.js';
 import * as tsk from './automatic-submission-flow-tools/asfTasks.js';
 import * as del from './automatic-submission-flow-tools/deltas.js';
-import * as smt from './automatic-submission-flow-tools/asfSubmissions.js';
 import * as err from './automatic-submission-flow-tools/errors.js';
 import * as N3 from 'n3';
 const { namedNode } = N3.DataFactory;
@@ -52,21 +51,7 @@ app.post('/delta', async function (req, res) {
         );
 
         const submission = await getSubmissionByTask(taskUri);
-        const { status, logicalFileUri } = await submission.process();
-        const resultingStatus = status;
-
-        let saveStatus;
-        switch (resultingStatus) {
-          case env.SENT_STATUS:
-            saveStatus = env.TASK_SUCCESSFUL_SENT_STATUS;
-            break;
-          case env.CONCEPT_STATUS:
-            saveStatus = env.TASK_SUCCESSFUL_CONCEPT_STATUS;
-            break;
-          default:
-            saveStatus = resultingStatus;
-            break;
-        }
+        const { logicalFileUri } = await submission.process();
 
         await tsk.updateStatus(
           task,
