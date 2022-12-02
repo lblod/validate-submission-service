@@ -60,7 +60,7 @@ app.post('/delta', async function (req, res, next) {
         );
       }
       catch (error) {
-        const message = `Something went wrong while enriching for task ${taskUri}`;
+        const message = `Something went wrong while validating for task ${taskUri}`;
         console.error(`${message}\n`, error.message);
         console.error(error);
         const errorUri = await saveError({ message, detail: error.message, });
