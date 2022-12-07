@@ -34,7 +34,7 @@ app.post('/delta', async function (req, res, next) {
       try {
         await updateTaskStatus(taskUri, env.TASK_ONGOING_STATUS);
         
-        const submission = await getSubmissionByTask(taskUri);
+        const submission = await getSubmissionByTask(taskUri, { req });
         const { status, logicalFileUri } = await submission.process();
         const resultingStatus = status;
 
