@@ -1,10 +1,11 @@
 import { app, errorHandler } from 'mu';
 import bodyParser from 'body-parser';
 import flatten from 'lodash.flatten';
-import { updateTaskStatus } from './lib/submission-task';
+import { updateTaskStatus, getOrganisationIdFromTask } from './lib/submission-task';
 import { getSubmissionByTask, getSubmissionBySubmissionDocument, SUBMITABLE_STATUS, SENT_STATUS, CONCEPT_STATUS } from './lib/submission';
 import * as env from './env.js';
 import { saveError } from './lib/utils.js';
+import * as config from './config';
 
 app.use(bodyParser.json({ type: function(req) { return /^application\/json/.test(req.get('content-type')); } }));
 
@@ -32,9 +33,11 @@ app.post('/delta', async function (req, res, next) {
 
     for (const taskUri of actualTaskUris) {
       try {
-        await updateTaskStatus(taskUri, env.TASK_ONGOING_STATUS);
+        const organisationId = await getOrganisationIdFromTask(taskUri);
+        const submissionGraph = config.GRAPH_TEMPLATE.replace('~ORGANIZATION_ID~', organisationId);
+        await updateTaskStatus(taskUri, env.TASK_ONGOING_STATUS, undefined, undefined, undefined, submissionGraph);
         
-        const submission = await getSubmissionByTask(taskUri, { req });
+        const submission = await getSubmissionByTask(taskUri, { req, organisationId, submissionGraph });
         const { status, logicalFileUri } = await submission.process();
         const resultingStatus = status;
 
@@ -56,7 +59,8 @@ app.post('/delta', async function (req, res, next) {
           env.TASK_SUCCESS_STATUS,
           undefined, //Potential errorURI
           saveStatus,
-          logicalFileUri
+          logicalFileUri,
+          submissionGraph,
         );
       }
       catch (error) {
@@ -64,7 +68,9 @@ app.post('/delta', async function (req, res, next) {
         console.error(`${message}\n`, error.message);
         console.error(error);
         const errorUri = await saveError({ message, detail: error.message, });
-        await updateTaskStatus(taskUri, env.TASK_FAILURE_STATUS, errorUri);
+        const organisationId = await getOrganisationIdFromTask(taskUri);
+        const submissionGraph = config.GRAPH_TEMPLATE.replace('~ORGANIZATION_ID~', organisationId);
+        await updateTaskStatus(taskUri, env.TASK_FAILURE_STATUS, errorUri, undefined, undefined, submissionGraph);
       }
     }
   }
