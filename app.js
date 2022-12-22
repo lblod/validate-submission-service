@@ -38,7 +38,7 @@ app.post('/delta', async function (req, res, next) {
         await updateTaskStatus(taskUri, env.TASK_ONGOING_STATUS, undefined, undefined, undefined, submissionGraph);
         
         const submission = await getSubmissionByTask(taskUri, { req, organisationId, submissionGraph });
-        const { status, logicalFileUri } = await submission.process();
+        const { status, logicalFile } = await submission.process();
         const resultingStatus = status;
 
         let saveStatus;
@@ -59,12 +59,12 @@ app.post('/delta', async function (req, res, next) {
           env.TASK_SUCCESS_STATUS,
           undefined, //Potential errorURI
           saveStatus,
-          logicalFileUri,
+          logicalFile,
           submissionGraph,
         );
       }
       catch (error) {
-        const message = `Something went wrong while enriching for task ${taskUri}`;
+        const message = `Something went wrong while validating for task ${taskUri}`;
         console.error(`${message}\n`, error.message);
         console.error(error);
         const errorUri = await saveError({ message, detail: error.message, });
