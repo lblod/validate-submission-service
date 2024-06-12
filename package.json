@@ -9,7 +9,7 @@
   "author": "redpencil.io",
   "license": "MIT",
   "dependencies": {
-    "@lblod/mu-auth-sudo": "^0.2.0",
+    "@lblod/mu-auth-sudo": "^0.6.1",
     "@lblod/submission-form-helpers": "^2.10.2",
     "body-parser": "1.20.3",
     "env-var": "^7.3.0",
