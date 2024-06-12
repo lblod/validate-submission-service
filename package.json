@@ -16,7 +16,6 @@
     "forking-store": "^2.2.0",
     "fs-extra": "^8.1.0",
     "lodash.flatten": "^4.4.0",
-    "moment": "^2.24.0",
     "rdflib": "^2.2.35"
   },
   "scripts": {
