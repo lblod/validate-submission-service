@@ -14,7 +14,6 @@
     "body-parser": "1.20.3",
     "env-var": "^7.3.0",
     "forking-store": "^2.2.0",
-    "fs-extra": "^8.1.0",
     "rdflib": "^2.2.35"
   },
   "scripts": {
