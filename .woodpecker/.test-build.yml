@@ -1,0 +1,10 @@
+steps:
+  build:
+    image: woodpeckerci/plugin-docker-buildx
+    settings:
+      repo: "${CI_REPO_OWNER}/${CI_REPO_NAME}"
+      platforms: linux/amd64
+      dry_run: true
+when:
+  event:
+    - pull_request
