@@ -1,6 +1,5 @@
 import { app, errorHandler } from 'mu';
 import bodyParser from 'body-parser';
-import flatten from 'lodash.flatten';
 import { updateTaskStatus, getOrganisationIdFromTask } from './lib/submission-task';
 import { getSubmissionByTask, getSubmissionBySubmissionDocument, SUBMITABLE_STATUS, SENT_STATUS, CONCEPT_STATUS } from './lib/submission';
 import * as env from './env.js';
