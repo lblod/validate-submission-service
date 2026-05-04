@@ -31,7 +31,7 @@ app.get('/', function (req, res) {
  * DELTA HANDLING
  */
 
-app.post('/delta', async function (req, res, next) {
+app.post('/delta', async function (req, res) {
   //We can already send a 200 back. The delta-notifier does not care about the result, as long as the request is closed.
   res.status(200).send().end();
 
