@@ -1,0 +1,15 @@
+steps:
+  lint:
+    image: node:24-alpine
+    commands:
+      # Need git for pulling some package dependencies (erikap/sparql-client)
+      - apk --no-cache add git
+      - npm ci
+      - npm run lint:js
+  testbuild:
+    image: woodpeckerci/plugin-docker-buildx
+    settings:
+      repo: ${CI_REPO}
+      dry_run: true
+when:
+  - event: pull_request
