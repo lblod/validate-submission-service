@@ -47,6 +47,6 @@ module.exports = defineConfig([{
     "!**/.*",
     "**/.*/",
     "**/.eslintcache",
-    "**/eslint.config.js",
+    "**/eslint.config.cjs",
     "**/.prettierrc.cjs",
 ])]);
