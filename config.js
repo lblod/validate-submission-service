@@ -1,6 +1,6 @@
-import * as env from 'env-var';
+import envvar from 'env-var';
 
-export const GRAPH_TEMPLATE = env
+export const GRAPH_TEMPLATE = envvar
   .get('GRAPH_TEMPLATE')
   .example(
     'http://mu.semte.ch/graphs/organizations/~ORGANIZATION_ID~/LoketLB-toezichtGebruiker',
