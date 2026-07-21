@@ -13,7 +13,7 @@
   "dependencies": {
     "@lblod/mu-auth-sudo": "^1.1.0",
     "@lblod/submission-form-helpers": "^3.1.0",
-    "body-parser": "2.2.2",
+    "body-parser": "2.3.0",
     "env-var": "^7.3.0",
     "forking-store": "^2.2.0",
     "rdflib": "^2.2.35"
